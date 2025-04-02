@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flux Finance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="index.css" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Sidebar Styling */
+        #sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            border-right: 4px solid #fffbfb;
+        }
+
+        #sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #sidebar ul li {
+            margin: 15px 0;
+        }
+
+        #sidebar ul li a {
+            text-decoration: none;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        #sidebar ul li a:hover {
+            background: #34495e;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo img{
+            align-self: center;
+            margin-top: 20px;
+        }
+
+        .content {
+            margin-left: 270px;
+            padding: 20px;
+            width: calc(100% - 270px);
+        }
+
+        .header {
+            background: #ecf0f1;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .main-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .carousel {
+            position: relative;
+            overflow: hidden;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .carousel-container {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 350px;
+            border-radius: 10px;
+        }
+
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .prev { left: -1; }
+        .next { right: 0; }
+        button{
+            padding: 10px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            text-decoration: none;
+            font-size: 15px;
+            cursor: pointer;
+            
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="logo">
+            <img src="./images/logo.webp" alt="Logo" width="60" height="60" />
+        </div>
+        <ul>
+            <li><a href="index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="transaction.html"><i class="fas fa-chart-line"></i> Transactions</a></li>
+            <li><a href="withdraw.html"><i class="fa-solid fa-receipt"></i> Withdrawals/Deposits</a></li>
+            <li><a href="editprofile.html"><i class="fa-solid fa-user"></i> My Profile</a></li>
+            <li><button onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content">
+        <div class="header">Flux Finance
+           <div id="userName">Welcome!</div>
+        </div>
+        <div class="main-section">
+            <h2>Welcome to Flux Finance</h2>
+            <h3>India's leading bank</h3>
+            <hr />
+            <!-- Carousel -->
+            <div class="carousel">
+                <div class="carousel-container">
+                    <div class="carousel-slide"><img src="./images/ed.png" alt="Banking Service 1"></div>
+                    <div class="carousel-slide"><img src="images/carousel2.png" alt="Banking Service 2" style="margin-left: -55px;"></div>
+                    <div class="carousel-slide"><img src="images/carousel-3.png" alt="Banking Service 3"></div>
+                </div>
+                <button class="prev" onclick="moveSlide(-1)">&#10094;</button>
+                <button class="next" onclick="moveSlide(1)">&#10095;</button>
+            </div>
+
+            <hr />
+            <h1>Our Services</h1>
+            <div class="services">
+                <div><img src="./images/service-1.png" alt="services-1" width="90%" height="280px" /> Bank Anytime, Anywhere </div>
+                <div><img src="./images/services-2.png" alt="services-2" width="90%" height="280px" /> Easy Access to your Account</div>
+                <div><img src="./images/services-3.png" alt="services-3" width="90%" height="280px" /> Transparent banking with zero surprises.
+                </div>
+            </div>
+
+            <hr />
+            <h1>Customer Benefits</h1>
+            <div class="cust-ben">
+                <div><img src="./images/customer-benefits1.png" width="90%" height="220px" /> We're here to help, anytime, anywhere.</div>
+                <div><img src="./images/customer-benefits-2.png" width="90%" height="220px" />  Cashback on card payments.</div>
+                <div><img src="./images/customer-benefits-3.png" width="90%" height="220px" /> Make Luxury your Lifestyle</div>
+            </div>
+        </div>
+        <div class="contact-main-container">
+            <div class="contact-container">
+               <div class="contact-left-box">
+                   <div class="heading">
+                      <h2>Get In Touch </h2>
+                      <div class="small-para">We will contact you as soon as possible</div>
+                      <hr></hr><!--horizontal line-->
+                   </div>
+       
+                   <div class="form-info">
+                       <form action="https://api.web3forms.com/submit" method="POST" class="user-details" id="form">
+                           <input type="hidden" name="access_key" value="f3f63f5e-2d13-4327-b942-1b4a2cbae364">
+                          <div class="user-names">
+                            <input type="text" name="firstname" placeholder="First Name" class="user-inputs firstn" onkeyup="alphabetonly(this)" required>
+                            <input type="text" name="lastname" placeholder="Last Name" class="user-inputs firstn" onkeyup="alphabetonly(this)" required>
+                          <!--onkeyup is a event where the user releases a key-->
+                          </div>
+                          <div class="user-rest-details">
+                           <!--The numberonly(this) function is called, and this represents the current input element.-->
+                            <input type="tel" name="phone" id="number" placeholder="Your Phone Number" minlength="10" maxlength="10" class="user-inputs" onkeyup="numberonly(this)" required>
+                            <span id="verify_number"></span>
+                            <input type="email" name="email" id="email" placeholder="Your Email ID" class="user-inputs" onkeyup="verifyemail(this)" required>
+                            <span id="verify_email"></span><!--for displaying whter email entered is corred=ct or not-->
+                            <textarea name="message" placeholder="Message" class="user-inputs" required></textarea>
+                            <button type="submit" class="user-details-submit-btn">Submit</button>
+                          </div>
+                       </form>
+                   </div>
+               </div>
+       
+       
+               <div class="contact-right-box">
+                   <div class="contact_info">
+                       <h2> Contact Information</h2>
+                       <hr>
+                       <div>
+                       <div class="info"><i class="fa-solid fa-phone-volume"></i><span class="little-info"> +91 8591494402</span></div>
+                       <div class="info"><i class="fa-solid fa-envelope"></i><span class="little-info">fluxfinance@gmail.com</span></div>
+                       <div class="info"><i class="fa-solid fa-location-dot"></i><span class="little-info "> Kanakia Park, Mira Road East, Mira Bhayandar, Maharashtra 401107</span></div>
+                       </div>
+                   </div>
+                   <div class="maps">
+                       <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3765.5893583057355!2d72.8762326!3d19.300215899999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7b01633d596dd%3A0x5846eeeb84dd563f!2sShree%20L%20R%20Tiwari%20College%20of%20Engineering!5e0!3m2!1sen!2sin!4v1726672798264!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="google_location"></iframe>
+                   </div>
+               </div>
+            </div>
+           </div>
+    </div>
+
+    <script src="index.js"></script>
+    <script>
+         async function fetchUserName() {
+    try {
+      const response = await fetch("/getUserName");
+      const data = await response.json();
+      if (data.name) {
+        document.getElementById("userName").innerText = `Welcome, ${data.name}!`;
+      }
+    } catch (error) {
+      console.error("Error fetching user name:", error);
+    }
+  }
+
+  fetchUserName();
+    </script>
+</body>
+</html>

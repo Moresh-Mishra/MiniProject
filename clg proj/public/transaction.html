@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="transaction.css">
+    <style>
+        * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        display: flex;
+        min-height: 100vh;
+        font-family: Arial, sans-serif;
+      }
+
+      /* Sidebar Styling */
+      #sidebar {
+        width: 250px;
+        background: #2c3e50;
+        color: white;
+        padding: 20px;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        overflow-y: auto;
+        border-right: 4px solid #fffbfb;
+      }
+
+      #sidebar ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      #sidebar ul li {
+        margin: 15px 0;
+      }
+
+      #sidebar ul li a {
+        text-decoration: none;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 5px;
+        transition: background 0.3s;
+      }
+
+      #sidebar ul li a:hover {
+        background: #34495e;
+      }
+
+      .logo {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      /* Main Content Styling */
+      .content {
+        margin-left: 270px;
+        padding: 20px;
+        width: calc(100% - 270px);
+      }
+
+      .header {
+        background: #ecf0f1;
+        padding: 20px;
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      .main-section {
+        margin-top: 20px;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      button{
+            padding: 10px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            text-decoration: none;
+            font-size: 15px;
+            cursor: pointer;
+            
+        }
+    </style>
+</head>
+<body>
+    <nav id="sidebar">
+        <div class="logo">
+          <img src="./images/logo.webp" alt="Logo" width="60px" height="60px" />
+        </div>
+        <ul>
+          <li class="active">
+            <a href="index.html"><i class="fas fa-home"></i>Dashboard</a>
+          </li>
+          <li>
+            <a href="transaction.html"
+              ><i class="fas fa-chart-line"></i>Transactions</a
+            >
+          </li>
+          <li>
+            <a href="withdraw.html"
+              ><i class="fa-solid fa-receipt"></i>Withdrawals/Deposits</a
+            >
+          </li>
+          <li>
+            <a href="editprofile.html"
+              ><i class="fa-solid fa-user"></i>My Profile</a
+            >
+          </li>
+          <li><button onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button></li>
+        </ul>
+      </nav>
+        <main class="content">
+            <header>
+                <input type="search" placeholder="Search here...">
+            </header>            
+            <section class="transactions">
+                <h2>Transaction History</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Recipient</th>
+                            <th>Invoice</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Naman Sharma</td>
+                            <td>INV-001-123456</td>
+                            <td>January 25, 2025</td>
+                            <td>Rs50,036</td>
+                            <td>Vasai</td>
+                            <td class="status complete">Complete</td>
+                        </tr>
+                        <tr>
+                            <td>Moresh Mishra</td>
+                            <td>INV-001-123456</td>
+                            <td>January 20, 2025</td>
+                            <td>Rs10,000</td>
+                            <td>Miraroad</td>
+                            <td class="status canceled">Canceled</td>
+                        </tr>
+                        <tr>
+                            <td>Sahil Mishra</td>
+                            <td>INV-001-123456</td>
+                            <td>January 16, 2025</td>
+                            <td>Rs80,000</td>
+                            <td>Andheri</td>
+                            <td class="status complete">Complete</td>
+                        </tr>
+                        <tr>
+                            <td>Bhoomi Maurya</td>
+                            <td>INV-001-123456</td>
+                            <td>January 10, 2025</td>
+                            <td>24,500</td>
+                            <td>Kandivali</td>
+                            <td class="status canceled">Canceled</td>
+                        </tr>
+                        <tr>
+                            <td>Tanishq Jwellers</td>
+                            <td>INV-001-123456</td>
+                            <td>November 21, 2024</td>
+                            <td>Rs 2,45,345</td>
+                            <td>Borivali</td>
+                            <td class="status complete">Complete</td>
+                        </tr>
+                        <tr>
+                            <td>Jyoti Stationary</td>
+                            <td>INV-001-123456</td>
+                            <td>July 5,2024</td>
+                            <td>Rs 245</td>
+                            <td>Bhayander</td>
+                            <td class="status pending">pending</td>
+                        </tr>
+                        <tr>
+                            <td>Jyoti Stationary</td>
+                            <td>INV-001-123456</td>
+                            <td>July 5, 2024</td>
+                            <td>Rs 245</td>
+                            <td>Bhayander</td>
+                            <td class="status pending">pending</td>
+                        </tr>
+                        <tr>
+                            <td>Jyoti Stationary</td>
+                            <td>INV-001-123456</td>
+                            <td>July 5, 2024</td>
+                            <td>Rs 245</td>
+                            <td>Bhayander</td>
+                            <td class="status pending">pending</td>
+                        </tr>
+                        <tr>
+                            <td>Jyoti Stationary</td>
+                            <td>INV-001-123456</td>
+                            <td>July 5, 2024</td>
+                            <td>Rs 245</td>
+                            <td>Bhayander</td>
+                            <td class="status pending">pending</td>
+                        </tr>
+                        <tr>
+                            <td>Jyoti Stationary</td>
+                            <td>INV-001-123456</td>
+                            <td>July 5, 2024</td>
+                            <td>Rs 245</td>
+                            <td>Bhayander</td>
+                            <td class="status pending">pending</td>
+                        </tr>
+                        <tr>
+                            <td>Jyoti Stationary</td>
+                            <td>INV-001-123456</td>
+                            <td>July 5, 2024</td>
+                            <td>Rs 245</td>
+                            <td>Bhayander</td>
+                            <td class="status pending">pending</td>
+                        </tr>
+                        <tr>
+                            <td>Jyoti Stationary</td>
+                            <td>INV-001-123456</td>
+                            <td>July 5, 2024</td>
+                            <td>Rs 245</td>
+                            <td>Bhayander</td>
+                            <td class="status pending">pending</td>
+                        </tr>
+                        <tr>
+                            <td>Jyoti Stationary</td>
+                            <td>INV-001-123456</td>
+                            <td>July 5, 2024</td>
+                            <td>Rs 245</td>
+                            <td>Bhayander</td>
+                            <td class="status pending">pending</td>
+                        </tr>
+                        <tr>
+                            <td>Jyoti Stationary</td>
+                            <td>INV-001-123456</td>
+                            <td>July 5, 2024</td>
+                            <td>Rs 245</td>
+                            <td>Bhayander</td>
+                            <td class="status pending">pending</td>
+                        </tr>
+                        <tr>
+                            <td>Jyoti Stationary</td>
+                            <td>INV-001-123456</td>
+                            <td>July 5, 2024</td>
+                            <td>Rs 245</td>
+                            <td>Bhayander</td>
+                            <td class="status pending">pending</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
