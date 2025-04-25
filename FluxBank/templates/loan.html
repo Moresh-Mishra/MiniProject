@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}Apply for Loan{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body p-5">
+                <h2 class="text-center mb-4">Apply for Loan</h2>
+                <form method="POST" action="{{ url_for('loan') }}" id="loan-form">
+                    <!-- Basic Loan Information -->
+                    <div class="mb-4">
+                        <label for="account" class="form-label">From Account</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-university"></i>
+                            </span>
+                            <select class="form-select" id="account" name="account" required>
+                                <option value="" selected disabled>Select your account</option>
+                                {% for account in accounts %}
+                                    <option value="{{ account.account_number }}">{{ account.account_number }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="loan_type" class="form-label">Loan Type</label>
+                        <select class="form-select" id="loan_type" name="loan_type" required onchange="updateLoanRequirements()">
+                            <option value="" selected disabled>Select loan type</option>
+                            {% for loan_type in loan_types %}
+                                <option value="{{ loan_type }}">{{ loan_type }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="amount" class="form-label">Loan Amount</label>
+                        <div class="input-group">
+                            <span class="input-group-text">₹</span>
+                            <input type="number" class="form-control" id="amount" name="amount" 
+                                   step="0.01" min="0.01" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="tenure" class="form-label">Tenure (in months)</label>
+                        <input type="number" class="form-control" id="tenure" name="tenure" min="1" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="description" class="form-label">Purpose of Loan</label>
+                        <textarea class="form-control" id="description" name="description" 
+                                  rows="2" placeholder="Describe why you need the loan" required></textarea>
+                    </div>
+
+                    <!-- Dynamic Loan Requirements -->
+                    <div id="loan-requirements">
+                        <!-- Requirements will be dynamically inserted here -->
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-file-signature me-2"></i>Apply for Loan
+                        </button>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Recent Loan Applications -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">Recent Loan Applications</h5>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Loan Type</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for loan in loans %}
+                            <tr>
+                                <td>{{ loan.created_at }}</td>
+                                <td>{{ loan.loan_type }}</td>
+                                <td>${{ "%.2f"|format(loan.loan_amount) }}</td>
+                                <td>
+                                    {% if loan.status == 'PENDING' %}
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    {% elif loan.status == 'APPROVED' %}
+                                        <span class="badge bg-success">Approved</span>
+                                    {% elif loan.status == 'REJECTED' %}
+                                        <span class="badge bg-danger">Rejected</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ loan.status }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+function updateLoanRequirements() {
+    const loanType = document.getElementById('loan_type').value;
+    const requirementsDiv = document.getElementById('loan-requirements');
+    requirementsDiv.innerHTML = '';
+
+    // Fetch requirements for the selected loan type
+    fetch(`/get_loan_requirements?loan_type=${loanType}`)
+        .then(response => response.json())
+        .then(requirements => {
+            requirements.forEach(req => {
+                const div = document.createElement('div');
+                div.className = 'mb-4';
+                
+                const label = document.createElement('label');
+                label.className = 'form-label';
+                label.htmlFor = req.requirement_name;
+                label.textContent = req.description;
+                
+                let input;
+                switch(req.requirement_type) {
+                    case 'number':
+                        input = document.createElement('input');
+                        input.type = 'number';
+                        input.className = 'form-control';
+                        input.id = req.requirement_name;
+                        input.name = req.requirement_name;
+                        input.required = req.is_required;
+                        break;
+                        
+                    case 'text':
+                        input = document.createElement('input');
+                        input.type = 'text';
+                        input.className = 'form-control';
+                        input.id = req.requirement_name;
+                        input.name = req.requirement_name;
+                        input.required = req.is_required;
+                        break;
+                        
+                    case 'select':
+                        input = document.createElement('select');
+                        input.className = 'form-select';
+                        input.id = req.requirement_name;
+                        input.name = req.requirement_name;
+                        input.required = req.is_required;
+                        
+                        // Add options based on requirement name
+                        if (req.requirement_name === 'employment_status') {
+                            ['Employed', 'Self-employed', 'Unemployed', 'Student'].forEach(option => {
+                                const opt = document.createElement('option');
+                                opt.value = option;
+                                opt.textContent = option;
+                                input.appendChild(opt);
+                            });
+                        }
+                        break;
+                        
+                    case 'date':
+                        input = document.createElement('input');
+                        input.type = 'date';
+                        input.className = 'form-control';
+                        input.id = req.requirement_name;
+                        input.name = req.requirement_name;
+                        input.required = req.is_required;
+                        break;
+                }
+                
+                div.appendChild(label);
+                div.appendChild(input);
+                requirementsDiv.appendChild(div);
+            });
+        });
+}
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Transfer Money{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body p-5">
+                <h2 class="text-center mb-4">Transfer Money</h2>
+                <form method="POST" action="/transfer">
+                    <div class="mb-4">
+                        <label for="from_account" class="form-label">From Account</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-university"></i>
+                            </span>
+                            <input type="text" class="form-control" id="from_account" name="from_account" 
+                                   placeholder="Enter your account number" required>
+                        </div>
+                        <small class="text-muted">Your account numbers: 
+                            {% for account in accounts %}
+                                {{ account.account_number }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </small>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="to_account" class="form-label">To Account</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <input type="text" class="form-control" id="to_account" name="to_account" 
+                                   placeholder="Enter account number or email" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="amount" class="form-label">Amount</label>
+                        <div class="input-group">
+                            <span class="input-group-text">₹</span>
+                            <input type="number" class="form-control" id="amount" name="amount" 
+                                   step="0.01" min="0.01" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" 
+                                  rows="2" placeholder="Enter transfer description"></textarea>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-paper-plane me-2"></i>Send Money
+                        </button>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Recent Transfers -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">Recent Transfers</h5>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>To</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for account in accounts %}
+                                {% for transaction in account.transactions[:5] %}
+                                <tr>
+                                    <td>{{ transaction.timestamp.strftime('%Y-%m-%d') }}</td>
+                                    <td>{{ transaction.description }}</td>
+                                    <td>₹{{ "%.2f"|format(transaction.amount) }}</td>
+                                    <td>
+                                        <span class="badge bg-success">Completed</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add form validation
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const amount = document.getElementById('amount').value;
+        const fromAccount = document.getElementById('from_account').value;
+        
+        if (!fromAccount) {
+            e.preventDefault();
+            alert('Please enter your account number');
+            return;
+        }
+        
+        if (amount <= 0) {
+            e.preventDefault();
+            alert('Please enter a valid amount');
+            return;
+        }
+    });
+</script>
+{% endblock %} 

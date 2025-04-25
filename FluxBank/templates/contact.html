@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+<div class="contact-main-container">
+  <div class="contact-container">
+    <div class="contact-left-box">
+      <div class="heading">
+        <h2>Get In Touch</h2>
+        <div class="small-para">
+          We will contact you as soon as possible
+        </div>
+        <hr />
+        <!--horizontal line-->
+      </div>
+
+      <div class="form-info">
+        <form
+          action="https://api.web3forms.com/submit"
+          method="POST"
+          class="user-details"
+          id="form"
+        >
+          <input
+            type="hidden"
+            name="access_key"
+            value="f3f63f5e-2d13-4327-b942-1b4a2cbae364"
+          />
+          <div class="user-names">
+            <input
+              type="text"
+              name="firstname"
+              placeholder="First Name"
+              class="user-inputs firstn"
+              onkeyup="alphabetonly(this)"
+              required
+            />
+            <input
+              type="text"
+              name="lastname"
+              placeholder="Last Name"
+              class="user-inputs firstn"
+              onkeyup="alphabetonly(this)"
+              required
+            />
+            <!--onkeyup is a event where the user releases a key-->
+          </div>
+          <div class="user-rest-details">
+            <!--The numberonly(this) function is called, and this represents the current input element.-->
+            <input
+              type="tel"
+              name="phone"
+              id="number"
+              placeholder="Your Phone Number"
+              minlength="10"
+              maxlength="10"
+              class="user-inputs"
+              onkeyup="numberonly(this)"
+              required
+            />
+            <span id="verify_number"></span>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              placeholder="Your Email ID"
+              class="user-inputs"
+              onkeyup="verifyemail(this)"
+              required
+            />
+            <span id="verify_email"></span
+            ><!--for displaying whter email entered is corred=ct or not-->
+            <textarea
+              name="message"
+              placeholder="Message"
+              class="user-inputs"
+              required
+            ></textarea>
+            <button type="submit" class="user-details-submit-btn">
+              Submit
+            </button>
+        </form>
+      </div>
+      <a href="{{ url_for('dashboard') }}" class="btn btn-primary mt-3">
+        Back To Dashboard
+      </a>
+    </div>
+    <div class="contact-right-box">
+      <div class="contact_info">
+        <h2>Contact Information</h2>
+        <hr />
+        <div>
+          <div class="info">
+            <i class="fa-solid fa-phone-volume"></i
+            ><span class="little-info"> +91 8591494402</span>
+          </div>
+          <div class="info">
+            <i class="fa-solid fa-envelope"></i
+            ><span class="little-info"> fluxsupportx@gmail.com</span>
+          </div>
+          <div class="info">
+            <i class="fa-solid fa-location-dot"></i
+            ><span class="little-info">
+              Kanakia Park, Mira Road East, Mira Bhayandar, Maharashtra
+              401107</span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="maps">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3765.5893583057355!2d72.8762326!3d19.300215899999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7b01633d596dd%3A0x5846eeeb84dd563f!2sShree%20L%20R%20Tiwari%20College%20of%20Engineering!5e0!3m2!1sen!2sin!4v1726672798264!5m2!1sen!2sin"
+          width="600"
+          height="450"
+          style="border: 0"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          class="google_location"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+  .contact-main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    background-color: #f4f4f4;
+    padding: 40px 20px;
+  }
+
+  .contact-container {
+    display: flex;
+    max-width: 1200px;
+    width: 100%;
+    background: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  /* Left Side - Contact Form */
+  .contact-left-box {
+    flex: 1;
+    padding: 40px;
+    background: #ffffff;
+  }
+
+  .heading h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  .small-para {
+    color: #666;
+    font-size: 16px;
+  }
+
+  .user-details {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .user-inputs {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
+  .user-names {
+    display: flex;
+    gap: 10px;
+  }
+
+  .user-names input {
+    flex: 1;
+  }
+
+  .user-details-submit-btn {
+    background: #007bff;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .user-details-submit-btn:hover {
+    background: #0056b3;
+  }
+
+  /* Right Side - Contact Info */
+  .contact-right-box {
+    flex: 1;
+    background: #007bff;
+    color: white;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .contact_info h2 {
+    font-size: 26px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .info {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+  }
+
+  .info img {
+    width: 24px;
+    margin-right: 10px;
+  }
+
+  .little-info {
+    font-size: 16px;
+  }
+
+  /* Google Maps */
+  .maps iframe {
+    width: 100%;
+    height: 250px;
+    border-radius: 10px;
+    margin-top: 20px;
+  }
+</style>
+{% endblock %}

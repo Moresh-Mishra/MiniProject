@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Deposit Money{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body p-5">
+                <h2 class="text-center mb-4">Deposit Money</h2>
+                <form method="POST" action="{{ url_for('deposit') }}" id="deposit-form">
+                    <div class="mb-4">
+                        <label for="account" class="form-label">To Account</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-university"></i>
+                            </span>
+                            <select class="form-select" id="account" name="account" required>
+                                <option value="" selected disabled>Select your account</option>
+                                {% for account in accounts %}
+                                <option value="{{ account.id }}">{{ account.account_number }} ({{ account.account_type }}) - Balance: ${{ "%.2f"|format(account.balance) }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="amount" class="form-label">Amount</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" id="amount" name="amount" 
+                                   step="0.01" min="0.01" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" 
+                                  rows="2" placeholder="Enter deposit description"></textarea>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-money-bill-wave me-2"></i>Deposit Money
+                        </button>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Recent Deposits -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">Recent Deposits</h5>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Account</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for account in accounts %}
+                                {% for transaction in account.transactions[:5] %}
+                                {% if transaction.transaction_type == 'credit' %}
+                                <tr>
+                                    <td>{{ transaction.timestamp.strftime('%Y-%m-%d') }}</td>
+                                    <td>{{ account.account_number }}</td>
+                                    <td>${{ "%.2f"|format(transaction.amount) }}</td>
+                                    <td>
+                                        <span class="badge bg-success">Completed</span>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section py-5 mb-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6 fade-in">
+            <h1 class="display-4 fw-bold mb-4">Your Trusted Partner in Digital Banking</h1>
+            <p class="lead mb-4">Experience seamless banking with FluxBank. Manage your finances, transfer money, and track your spending all in one place.</p>
+            <div class="cta-buttons">
+                <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg me-3 mb-3 mb-md-0">
+                    <i class="fas fa-user-plus me-2"></i> Get Started
+                </a>
+                <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-sign-in-alt me-2"></i> Login
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-6 d-none d-lg-block fade-in">
+            <img src="{{ url_for('static', filename='images/indeximg.jpg') }}" alt="Banking App" class="img-fluid rounded shadow-lg" style="width: 600px; height: auto;">
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="features-section py-5 mb-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">Why Choose FluxBank?</h2>
+        <p class="text-muted">Experience the future of banking with our innovative features</p>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-4 fade-in">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="bg-light rounded-circle p-3 d-inline-block mb-3">
+                        <i class="fas fa-mobile-alt fa-2x text-primary"></i>
+                    </div>
+                    <h3 class="card-title h5">Mobile Banking</h3>
+                    <p class="card-text text-muted">Bank on the go with our secure mobile banking app. Access your accounts anytime, anywhere.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 fade-in">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="bg-light rounded-circle p-3 d-inline-block mb-3">
+                        <i class="fas fa-shield-alt fa-2x text-primary"></i>
+                    </div>
+                    <h3 class="card-title h5">Secure Transactions</h3>
+                    <p class="card-text text-muted">Your security is our top priority with advanced encryption and multi-factor authentication.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 fade-in">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="bg-light rounded-circle p-3 d-inline-block mb-3">
+                        <i class="fas fa-exchange-alt fa-2x text-primary"></i>
+                    </div>
+                    <h3 class="card-title h5">Easy Transfers</h3>
+                    <p class="card-text text-muted">Transfer money instantly to anyone, anywhere with just a few clicks.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Benefits Section -->
+<div class="benefits-section py-5 bg-light rounded-3 mb-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6 fade-in">
+            <h2 class="fw-bold mb-4">Banking Made Simple</h2>
+            <div class="d-flex align-items-center mb-4">
+                <div class="bg-white rounded-circle p-3 me-3 shadow-sm">
+                    <i class="fas fa-headset fa-2x text-primary"></i>
+                </div>
+                <div>
+                    <h4 class="h5 mb-1">24/7 Customer Support</h4>
+                    <p class="text-muted mb-0">Our dedicated team is always here to help you</p>
+                </div>
+            </div>
+            <div class="d-flex align-items-center mb-4">
+                <div class="bg-white rounded-circle p-3 me-3 shadow-sm">
+                    <i class="fas fa-percentage fa-2x text-primary"></i>
+                </div>
+                <div>
+                    <h4 class="h5 mb-1">Competitive Interest Rates</h4>
+                    <p class="text-muted mb-0">Earn more on your savings with our competitive rates</p>
+                </div>
+            </div>
+            <div class="d-flex align-items-center mb-4">
+                <div class="bg-white rounded-circle p-3 me-3 shadow-sm">
+                    <i class="fas fa-receipt fa-2x text-primary"></i>
+                </div>
+                <div>
+                    <h4 class="h5 mb-1">No Hidden Fees</h4>
+                    <p class="text-muted mb-0">Transparent pricing with no surprise charges</p>
+                </div>
+            </div>
+            <div class="d-flex align-items-center">
+                <div class="bg-white rounded-circle p-3 me-3 shadow-sm">
+                    <i class="fas fa-sync-alt fa-2x text-primary"></i>
+                </div>
+                <div>
+                    <h4 class="h5 mb-1">Real-time Updates</h4>
+                    <p class="text-muted mb-0">Get instant notifications for all your transactions</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 d-none d-lg-block fade-in">
+            <img src="{{ url_for('static', filename='images/indeximg2.jpg') }}" alt="Banking Benefits" class="img-fluid rounded shadow-lg" style="width: 600px; height: auto;">
+        </div>
+    </div>
+</div>
+
+<!-- Testimonials Section -->
+<div class="testimonials-section py-5 mb-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">What Our Customers Say</h2>
+        <p class="text-muted">Hear from our satisfied customers</p>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-4 fade-in">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-light rounded-circle p-2 me-3">
+                            <i class="fas fa-user-circle fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">John Smith</h5>
+                            <small class="text-muted">Business Owner</small>
+                        </div>
+                    </div>
+                    <p class="card-text">"FluxBank has transformed how I manage my business finances. The mobile app is intuitive and the customer service is exceptional."</p>
+                    <div class="text-warning">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 fade-in">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-light rounded-circle p-2 me-3">
+                            <i class="fas fa-user-circle fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">Sarah Johnson</h5>
+                            <small class="text-muted">Freelancer</small>
+                        </div>
+                    </div>
+                    <p class="card-text">"As a freelancer, I need a bank that understands my needs. FluxBank's easy transfers and low fees have made managing my income so much simpler."</p>
+                    <div class="text-warning">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 fade-in">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-light rounded-circle p-2 me-3">
+                            <i class="fas fa-user-circle fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">Michael Brown</h5>
+                            <small class="text-muted">Student</small>
+                        </div>
+                    </div>
+                    <p class="card-text">"The student account features at FluxBank are perfect for me. I love the budgeting tools that help me track my spending and save for the future."</p>
+                    <div class="text-warning">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="cta-section py-5 text-center bg-primary text-white rounded-3 fade-in">
+    <h2 class="fw-bold mb-3">Ready to Get Started?</h2>
+    <p class="lead mb-4">Join thousands of satisfied customers who trust FluxBank for their financial needs.</p>
+    <a href="{{ url_for('register') }}" class="btn btn-light btn-lg">
+        <i class="fas fa-user-plus me-2"></i> Create Your Account
+    </a>
+</div>
+{% endblock %} 
