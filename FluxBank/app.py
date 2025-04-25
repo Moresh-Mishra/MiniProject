@@ -5,10 +5,12 @@ import os
 from dotenv import load_dotenv
 import mysql.connector
 from mysql.connector import Error
+from mysql.connector import pooling
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 import requests
 import time
+import functools
 
 # Load environment variables
 load_dotenv()
@@ -21,8 +23,17 @@ db_config = {
     'host': os.getenv('DB_HOST'),
     'user': os.getenv('DB_USER'),
     'password': os.getenv('DB_PASSWORD'),
-    'database': os.getenv('DB_NAME')
-    }
+    'database': os.getenv('DB_NAME'),
+    'pool_name': 'mypool',
+    'pool_size': 5
+}
+
+# Create connection pool
+try:
+    connection_pool = mysql.connector.pooling.MySQLConnectionPool(**db_config)
+except Error as e:
+    print(f"Error creating connection pool: {e}")
+    connection_pool = None
 
 # Alpha Vantage API Configuration
 ALPHA_VANTAGE_API_KEY = os.getenv('ALPHA_VANTAGE_API_KEY')
@@ -32,10 +43,11 @@ ALPHA_VANTAGE_API_KEY = os.getenv('ALPHA_VANTAGE_API_KEY')
 
 def get_db_connection():
     try:
-        connection = mysql.connector.connect(**db_config)
-        return connection
+        if connection_pool:
+            return connection_pool.get_connection()
+        return None
     except Error as e:
-        print(f"Error connecting to MySQL: {e}")
+        print(f"Error getting connection from pool: {e}")
         return None
 
 # User class for Flask-Login
@@ -190,6 +202,26 @@ def register():
             conn.close()
     return render_template('register.html')
 
+# Cache for market data
+market_data_cache = {
+    'data': None,
+    'timestamp': None,
+    'expiry': timedelta(minutes=5)  # Cache expiry time
+}
+
+def get_cached_market_data():
+    current_time = datetime.now()
+    if (market_data_cache['data'] is not None and 
+        market_data_cache['timestamp'] is not None and 
+        current_time - market_data_cache['timestamp'] < market_data_cache['expiry']):
+        return market_data_cache['data']
+    
+    # If cache is expired or empty, fetch new data
+    market_data = get_market_data()
+    market_data_cache['data'] = market_data
+    market_data_cache['timestamp'] = current_time
+    return market_data
+
 @app.route('/dashboard')
 @login_required
 def dashboard():
@@ -202,97 +234,79 @@ def dashboard():
         
         cursor = conn.cursor(dictionary=True)
         try:
-            # 1. Get user accounts
+            # 1. Get user accounts and recent transactions in a single query
             user_id = current_user.id
-            cursor.execute("SELECT * FROM account WHERE user_id = %s", (user_id,))
+            cursor.execute("""
+                SELECT a.*, 
+                    (SELECT JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                            'id', t.id,
+                            'amount', t.amount,
+                            'transaction_type', t.transaction_type,
+                            'description', t.description,
+                            'timestamp', t.timestamp
+                        )
+                    )
+                    FROM transaction t 
+                    WHERE t.account_id = a.id 
+                    ORDER BY t.timestamp DESC 
+                    LIMIT 5
+                    ) as recent_transactions
+                FROM account a 
+                WHERE a.user_id = %s
+            """, (user_id,))
             accounts = cursor.fetchall()
             
             if not accounts:
                 flash('No accounts found')
                 return redirect(url_for('index'))
             
-            # 2. Get recent transactions for each account
+            # Convert JSON string to Python objects
             for account in accounts:
-                try:
-                    cursor.execute("""
-                        SELECT * FROM transaction 
-                        WHERE account_id = %s 
-                        ORDER BY timestamp DESC 
-                        LIMIT 5
-                    """, (account['id'],))
-                    account['transactions'] = cursor.fetchall()
-                except Error as e:
-                    print(f"Error fetching transactions for account {account['id']}: {e}")
+                if account['recent_transactions']:
+                    account['transactions'] = json.loads(account['recent_transactions'])
+                else:
                     account['transactions'] = []
+                del account['recent_transactions']
             
-            # 3. Get spending categories data for the doughnut chart
-            try:
-                cursor.execute("""
-                   SELECT 
-                `   CASE 
-                WHEN LOWER(description) LIKE '%shopping%' OR LOWER(description) LIKE '%store%' OR LOWER(description) LIKE '%amazon%' THEN 'Shopping'
-                WHEN LOWER(description) LIKE '%bill%' OR LOWER(description) LIKE '%utility%' OR LOWER(description) LIKE '%electric%' OR LOWER(description) LIKE '%water%' THEN 'Bills'
-                WHEN LOWER(description) LIKE '%entertainment%' OR LOWER(description) LIKE '%movie%' OR LOWER(description) LIKE '%netflix%' OR LOWER(description) LIKE '%spotify%' THEN 'Entertainment'
-                WHEN LOWER(description) LIKE '%food%' OR LOWER(description) LIKE '%restaurant%' OR LOWER(description) LIKE '%cafe%' OR LOWER(description) LIKE '%grocery%' THEN 'Food'
-                WHEN LOWER(description) LIKE '%transport%' OR LOWER(description) LIKE '%uber%' OR LOWER(description) LIKE '%lyft%' OR LOWER(description) LIKE '%taxi%' OR LOWER(description) LIKE '%bus%' THEN 'Transport'
-                ELSE 'Other'
-                END AS category,
-                COALESCE(SUM(amount), 0) AS total_amount
+            # 2. Get spending categories data in a single query
+            cursor.execute("""
+                SELECT 
+                    CASE 
+                        WHEN LOWER(description) LIKE '%shopping%' THEN 'Shopping'
+                        WHEN LOWER(description) LIKE '%bill%' THEN 'Bills'
+                        WHEN LOWER(description) LIKE '%food%' THEN 'Food'
+                        WHEN LOWER(description) LIKE '%transport%' THEN 'Transport'
+                        ELSE 'Other'
+                    END AS category,
+                    COALESCE(SUM(amount), 0) AS total_amount
                 FROM transaction t
                 JOIN account a ON t.account_id = a.id
                 WHERE a.user_id = %s 
                     AND t.transaction_type = 'debit'
                 GROUP BY category
-                ORDER BY total_amount DESC;
-                """, (user_id,))
-                spending_categories = cursor.fetchall()
-            except Error as e:
-                print(f"Error fetching spending categories: {e}")
-                spending_categories = [
-                    {'category': 'Shopping', 'total_amount': 0},
-                    {'category': 'Bills', 'total_amount': 0},
-                    {'category': 'Entertainment', 'total_amount': 0},
-                    {'category': 'Food', 'total_amount': 0},
-                    {'category': 'Transport', 'total_amount': 0},
-                    {'category': 'Other', 'total_amount': 0}
-                ]
+                ORDER BY total_amount DESC
+            """, (user_id,))
+            spending_categories = cursor.fetchall()
             
-            # 4. Get monthly income and expenses for the bar chart
-            try:
-                cursor.execute("""
-                    SELECT 
-                        DATE_FORMAT(timestamp, '%Y-%m') AS month,
-                        COALESCE(SUM(CASE WHEN transaction_type = 'credit' THEN amount ELSE 0 END), 0) AS income,
-                        COALESCE(SUM(CASE WHEN transaction_type = 'debit' THEN amount ELSE 0 END), 0) AS expenses
-                    FROM transaction t
-                    JOIN account a ON t.account_id = a.id
-                    WHERE a.user_id = %s
-                    GROUP BY DATE_FORMAT(timestamp, '%Y-%m')
-                    ORDER BY month DESC
-                    LIMIT 6
-                """, (user_id,))
-                monthly_data = cursor.fetchall()
-            except Error as e:
-                print(f"Error fetching monthly data: {e}")
-                from datetime import datetime, timedelta
-                current_date = datetime.now()
-                monthly_data = []
-                for i in range(5, -1, -1):
-                    month_date = current_date - timedelta(days=30*i)
-                    monthly_data.append({
-                        'month': month_date.strftime('%Y-%m'),
-                        'income': 0,
-                        'expenses': 0
-                    })
+            # 3. Get monthly data in a single query
+            cursor.execute("""
+                SELECT 
+                    DATE_FORMAT(timestamp, '%Y-%m') AS month,
+                    COALESCE(SUM(CASE WHEN transaction_type = 'credit' THEN amount ELSE 0 END), 0) AS income,
+                    COALESCE(SUM(CASE WHEN transaction_type = 'debit' THEN amount ELSE 0 END), 0) AS expenses
+                FROM transaction t
+                JOIN account a ON t.account_id = a.id
+                WHERE a.user_id = %s
+                GROUP BY DATE_FORMAT(timestamp, '%Y-%m')
+                ORDER BY month DESC
+                LIMIT 6
+            """, (user_id,))
+            monthly_data = cursor.fetchall()
             
-            # 5. Get market data from Alpha Vantage
-            market_data = get_market_data()
+            # Get market data from cache
+            market_data = get_cached_market_data()
             
-            # Close database connection
-            cursor.close()
-            conn.close()
-            
-            # Render the dashboard template with the data
             return render_template('dashboard.html', 
                                 accounts=accounts, 
                                 spending_categories=spending_categories,
