@@ -216,7 +216,4 @@ function verifyemail(){
     }
 }
 
-document.getElementById('loadingvs').addEventListener('submit', function() {
-    document.getElementById('loader').style.display = 'flex';
-});
 
